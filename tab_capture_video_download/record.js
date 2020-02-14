@@ -83,7 +83,6 @@ function bindEvent() {
     } else {
       stopRecording();
       recordButton.textContent = 'Start Recording';
-      // playButton.disabled = false;
       downloadButton.disabled = false;
     }
   });
