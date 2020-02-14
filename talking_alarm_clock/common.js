@@ -10,7 +10,7 @@ var DEFAULT_A2_TT = '03:30';
 var DEFAULT_A2_AMPM = 1;
 var DEFAULT_RATE = 1.0;
 var DEFAULT_VOLUME = 1.0;
-var DEFAULT_PHRASE = 'It\'s $TIME, so get up!';
+var DEFAULT_PHRASE = "It's $TIME, so get up!";
 var DEFAULT_SOUND = 'ringing';
 
 var audio = null;
@@ -20,20 +20,16 @@ var isSpeaking = false;
 var isAnimating = false;
 
 // Overridden in popup.js but not in background.js.
-window.displayAlarmAnimation = function() {
-};
+window.displayAlarmAnimation = function() {};
 
 // Overridden in popup.js but not in background.js.
-window.stopAlarmAnimation = function() {
-};
+window.stopAlarmAnimation = function() {};
 
 // Overridden in background.js but not in popup.js.
-window.flashIcon = function() {
-};
+window.flashIcon = function() {};
 
 // Overridden in background.js but not in popup.js.
-window.stopFlashingIcon = function() {
-};
+window.stopFlashingIcon = function() {};
 
 function $(id) {
   return document.getElementById(id);
@@ -49,7 +45,7 @@ function parseTime(timeString, ampm) {
   if (hours == 12 && ampm == 0) {
     hours = 0;
   } else {
-    hours += (hours < 12 && ampm == 1)? 12 : 0;
+    hours += hours < 12 && ampm == 1 ? 12 : 0;
   }
   var minutes = parseInt(time[2], 10) || 0;
 
@@ -64,8 +60,7 @@ function stopAll() {
   try {
     chrome.tts.stop();
     isSpeaking = false;
-  } catch (e) {
-  }
+  } catch (e) {}
   window.stopAlarmAnimation();
   window.stopFlashingIcon();
 }
@@ -98,10 +93,10 @@ function playSound(duckAudio) {
   if (duckAudio) {
     for (var i = 0; i < 10; i++) {
       (function(i) {
-         window.setTimeout(function() {
-           var duckedVolume = volume * (1.0 - 0.07 * (i + 1));
-           audio.volume = duckedVolume;
-         }, 1800 + 50 * i);
+        window.setTimeout(function() {
+          var duckedVolume = volume * (1.0 - 0.07 * (i + 1));
+          audio.volume = duckedVolume;
+        }, 1800 + 50 * i);
       })(i);
     }
   }
@@ -109,13 +104,10 @@ function playSound(duckAudio) {
 
 function getTimeString(hh, mm) {
   var ampm = hh >= 12 ? 'P M' : 'A M';
-  hh = (hh % 12);
-  if (hh == 0)
-    hh = 12;
-  if (mm == 0)
-    mm = 'o\'clock';
-  else if (mm < 10)
-    mm = 'O ' + mm;
+  hh = hh % 12;
+  if (hh == 0) hh = 12;
+  if (mm == 0) mm = "o'clock";
+  else if (mm < 10) mm = 'O ' + mm;
 
   return hh + ' ' + mm + ' ' + ampm;
 }
@@ -125,18 +117,17 @@ function speak(text) {
   var pitch = 1.0;
   var volume = parseFloat(localStorage['volume']) || DEFAULT_VOLUME;
   var voice = localStorage['voice'];
-  chrome.tts.speak(
-      text,
-      {voiceName: voice,
-       rate: rate,
-       pitch: pitch,
-       volume: volume,
-       onEvent: function(evt) {
-         if (evt.type == 'end') {
-           isSpeaking = false;
-         }
-       }
-      });
+  chrome.tts.speak(text, {
+    voiceName: voice,
+    rate: rate,
+    pitch: pitch,
+    volume: volume,
+    onEvent: function(evt) {
+      if (evt.type == 'end') {
+        isSpeaking = false;
+      }
+    },
+  });
 }
 
 function speakPhraseWithTimeString(timeString) {

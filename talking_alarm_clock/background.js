@@ -14,7 +14,7 @@ var HOUR_MS = 1000 * 60 * 60;
 // Override from common.js
 window.stopFlashingIcon = function() {
   window.clearTimeout(iconFlashTimer);
-  chrome.browserAction.setIcon({'path': 'clock-19.png'});
+  chrome.browserAction.setIcon({ path: 'clock-19.png' });
 };
 
 // Override from common.js
@@ -27,9 +27,9 @@ window.flashIcon = function() {
     }
 
     if (flashes % 2 == 0) {
-      chrome.browserAction.setIcon({'path': 'clock-highlighted-19.png'});
+      chrome.browserAction.setIcon({ path: 'clock-highlighted-19.png' });
     } else {
-      chrome.browserAction.setIcon({'path': 'clock-19.png'});
+      chrome.browserAction.setIcon({ path: 'clock-19.png' });
     }
     flashes--;
     iconFlashTimer = window.setTimeout(flash, 500);
@@ -40,15 +40,13 @@ window.flashIcon = function() {
 function setTimer(alarmHours, alarmMinutes) {
   var alarmTime = (alarmHours * 60 + alarmMinutes) * 60 * 1000;
   var d = new Date();
-  var now = d.getHours() * HOUR_MS +
-            d.getMinutes() * 60 * 1000 +
-            d.getSeconds() * 1000;
-  var delta = (alarmTime - now);
+  var now = d.getHours() * HOUR_MS + d.getMinutes() * 60 * 1000 + d.getSeconds() * 1000;
+  var delta = alarmTime - now;
 
   if (delta >= -5000 && delta < 1000) {
     ringAlarm(alarmHours, alarmMinutes);
     if (port) {
-      port.postMessage({'cmd': 'anim'});
+      port.postMessage({ cmd: 'anim' });
     }
     return null;
   }
@@ -65,7 +63,7 @@ function setTimer(alarmHours, alarmMinutes) {
   }
 
   return null;
-};
+}
 
 function resetTimers() {
   if (a1Timer) {
@@ -73,7 +71,7 @@ function resetTimers() {
   }
 
   try {
-    var a1_on = (localStorage['a1_on'] == 'true');
+    var a1_on = localStorage['a1_on'] == 'true';
     var a1_tt = localStorage['a1_tt'] || DEFAULT_A1_TT;
     var a1_ampm = localStorage['a1_ampm'] || DEFAULT_A1_AMPM;
     if (a1_on) {
@@ -87,7 +85,7 @@ function resetTimers() {
   }
 
   try {
-    var a2_on = (localStorage['a2_on'] == 'true');
+    var a2_on = localStorage['a2_on'] == 'true';
     var a2_tt = localStorage['a2_tt'] || DEFAULT_A2_TT;
     var a2_ampm = localStorage['a2_ampm'] || DEFAULT_A2_AMPM;
     if (a2_on) {
@@ -101,9 +99,9 @@ function resetTimers() {
   }
 
   if (a1_on || a2_on) {
-    chrome.browserAction.setIcon({'path': 'clock-19.png'});
+    chrome.browserAction.setIcon({ path: 'clock-19.png' });
   } else {
-    chrome.browserAction.setIcon({'path': 'clock-disabled-19.png'});
+    chrome.browserAction.setIcon({ path: 'clock-disabled-19.png' });
   }
 }
 

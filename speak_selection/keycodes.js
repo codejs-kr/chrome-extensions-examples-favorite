@@ -55,10 +55,10 @@ var KEY_MAP = {
   191: '/',
   192: '`',
   219: '[',
-  221: ']'
+  221: ']',
 };
 
-var isMac = (navigator.appVersion.indexOf("Mac") != -1);
+var isMac = navigator.appVersion.indexOf('Mac') != -1;
 
 function keyEventToString(evt) {
   var tokens = [];
@@ -78,17 +78,18 @@ function keyEventToString(evt) {
     tokens.push(String.fromCharCode(evt.keyCode));
   } else if (KEY_MAP[evt.keyCode]) {
     tokens.push(KEY_MAP[evt.keyCode]);
-        } else {
+  } else {
     return '';
-        }
+  }
   return tokens.join('+');
 }
 
 function getDefaultKeyString() {
   return keyEventToString({
-    keyCode: 83,  // 's'
+    keyCode: 83, // 's'
     shiftKey: true,
     altKey: true,
     ctrlKey: true,
-    metaKey: false});
+    metaKey: false,
+  });
 }

@@ -68,18 +68,18 @@ function drawClock(hh, mm, ss) {
   ctx.drawImage(currentClockImage, 0, 0);
 
   // Move the hour by the fraction of the minute
-  hh = (hh % 12) + (mm / 60);
+  hh = (hh % 12) + mm / 60;
 
   // Move the minute by the fraction of the second
-  mm += (ss / 60);
+  mm += ss / 60;
 
-  var hourAngle = Math.PI * hh / 6;
+  var hourAngle = (Math.PI * hh) / 6;
   var hourX = Math.sin(hourAngle);
   var hourY = -Math.cos(hourAngle);
-  var minAngle = Math.PI * mm / 30;
+  var minAngle = (Math.PI * mm) / 30;
   var minX = Math.sin(minAngle);
   var minY = -Math.cos(minAngle);
-  var secAngle = Math.PI * ss / 30;
+  var secAngle = (Math.PI * ss) / 30;
   var secX = Math.sin(secAngle);
   var secY = -Math.cos(secAngle);
 
@@ -128,7 +128,7 @@ function updateCurrentTime() {
   if (hh % 12 == 0) {
     str += '12';
   } else {
-    str += (hh % 12);
+    str += hh % 12;
   }
   str += ':';
   if (mm >= 10) {
@@ -143,9 +143,9 @@ function updateCurrentTime() {
     str += '0' + ss;
   }
   if (hh >= 12) {
-    str += " PM";
+    str += ' PM';
   } else {
-    str += " AM";
+    str += ' AM';
   }
   $('current_time').innerText = str;
 }
@@ -167,9 +167,7 @@ window.displayAlarmAnimation = function() {
       stopAlarmAnimation();
       return;
     }
-    currentClockImage = (rings % 2 == 0)?
-                        blankClockAnim1Image:
-                        blankClockAnim2Image;
+    currentClockImage = rings % 2 == 0 ? blankClockAnim1Image : blankClockAnim2Image;
     drawClock();
     rings--;
     animationTimer = window.setTimeout(ring, 50);
@@ -178,14 +176,22 @@ window.displayAlarmAnimation = function() {
 };
 
 function addOutlineStyleListeners() {
-  document.addEventListener('click', function(evt) {
-    document.body.classList.add('nooutline');
-    return true;
-  }, true);
-  document.addEventListener('keydown', function(evt) {
-    document.body.classList.remove('nooutline');
-    return true;
-  }, true);
+  document.addEventListener(
+    'click',
+    function(evt) {
+      document.body.classList.add('nooutline');
+      return true;
+    },
+    true
+  );
+  document.addEventListener(
+    'keydown',
+    function(evt) {
+      document.body.classList.remove('nooutline');
+      return true;
+    },
+    true
+  );
 }
 
 function load() {
@@ -196,8 +202,7 @@ function load() {
         displayAlarmAnimation();
       }
     });
-  } catch (e) {
-  }
+  } catch (e) {}
 
   addOutlineStyleListeners();
 
@@ -213,72 +218,93 @@ function load() {
       return false;
     }
 
-    timeElement.valueAsNumber =
-        timeElement.valueAsNumber % (12 * 60 * 60 * 1000);
-    if (timeElement.valueAsNumber < (1 * 60 * 60 * 1000))
-      timeElement.valueAsNumber += (12 * 60 * 60 * 1000);
+    timeElement.valueAsNumber = timeElement.valueAsNumber % (12 * 60 * 60 * 1000);
+    if (timeElement.valueAsNumber < 1 * 60 * 60 * 1000) timeElement.valueAsNumber += 12 * 60 * 60 * 1000;
     return true;
   }
 
-  $('clock').addEventListener('click', function(evt) {
-    if (isPlaying || isSpeaking || isAnimating) {
-      stopAll();
-    } else {
-      ringAlarmWithCurrentTime();
-    }
-  }, false);
-  $('clock').addEventListener('keydown', function(evt) {
-    if (evt.keyCode == 13 || evt.keyCode == 32) {
+  $('clock').addEventListener(
+    'click',
+    function(evt) {
       if (isPlaying || isSpeaking || isAnimating) {
         stopAll();
       } else {
         ringAlarmWithCurrentTime();
       }
-    }
-  }, false);
+    },
+    false
+  );
+  $('clock').addEventListener(
+    'keydown',
+    function(evt) {
+      if (evt.keyCode == 13 || evt.keyCode == 32) {
+        if (isPlaying || isSpeaking || isAnimating) {
+          stopAll();
+        } else {
+          ringAlarmWithCurrentTime();
+        }
+      }
+    },
+    false
+  );
 
   // Alarm 1
 
   var a1_tt = localStorage['a1_tt'] || DEFAULT_A1_TT;
   $('a1_tt').value = a1_tt;
-  $('a1_tt').addEventListener('input', function(evt) {
-    updateEnabledStatus(1);
-    if (!updateTime($('a1_tt'))) {
-      evt.stopPropagation();
-      return false;
-    }
-    localStorage['a1_tt'] = $('a1_tt').value;
-    updateEnabledStatus(1);
-    return true;
-  }, false);
-  $('a1_tt').addEventListener('change', function(evt) {
-    if ($('a1_tt').value.length == 4 &&
-        parseTime('0' + $('a1_tt').value)) {
-      $('a1_tt').value = '0' + $('a1_tt').value;
-    }
-    if (!updateTime($('a1_tt'))) {
-      evt.stopPropagation();
-      return false;
-    }
-    localStorage['a1_tt'] = $('a1_tt').value;
-    updateEnabledStatus(1);
-    return true;
-  }, false);
-
-  var a1_on = (localStorage['a1_on'] == 'true');
-  $('a1_on').checked = a1_on;
-  $('a1_on').addEventListener('change', function(evt) {
-    window.setTimeout(function() {
-      localStorage['a1_on'] = $('a1_on').checked;
+  $('a1_tt').addEventListener(
+    'input',
+    function(evt) {
       updateEnabledStatus(1);
-    }, 0);
-  }, false);
+      if (!updateTime($('a1_tt'))) {
+        evt.stopPropagation();
+        return false;
+      }
+      localStorage['a1_tt'] = $('a1_tt').value;
+      updateEnabledStatus(1);
+      return true;
+    },
+    false
+  );
+  $('a1_tt').addEventListener(
+    'change',
+    function(evt) {
+      if ($('a1_tt').value.length == 4 && parseTime('0' + $('a1_tt').value)) {
+        $('a1_tt').value = '0' + $('a1_tt').value;
+      }
+      if (!updateTime($('a1_tt'))) {
+        evt.stopPropagation();
+        return false;
+      }
+      localStorage['a1_tt'] = $('a1_tt').value;
+      updateEnabledStatus(1);
+      return true;
+    },
+    false
+  );
+
+  var a1_on = localStorage['a1_on'] == 'true';
+  $('a1_on').checked = a1_on;
+  $('a1_on').addEventListener(
+    'change',
+    function(evt) {
+      window.setTimeout(function() {
+        localStorage['a1_on'] = $('a1_on').checked;
+        updateEnabledStatus(1);
+      }, 0);
+    },
+    false
+  );
 
   var a1_ampm = localStorage['a1_ampm'] || DEFAULT_A1_AMPM;
   $('a1_ampm').selectedIndex = a1_ampm;
-  $('a1_ampm').addEventListener('change', function(evt) {
-    localStorage['a1_ampm'] = $('a1_ampm').selectedIndex;
-  }, false);
+  $('a1_ampm').addEventListener(
+    'change',
+    function(evt) {
+      localStorage['a1_ampm'] = $('a1_ampm').selectedIndex;
+    },
+    false
+  );
 
   updateEnabledStatus(1);
 
@@ -286,44 +312,59 @@ function load() {
 
   var a2_tt = localStorage['a2_tt'] || DEFAULT_A2_TT;
   $('a2_tt').value = a2_tt;
-  $('a2_tt').addEventListener('input', function(evt) {
-    updateEnabledStatus(2);
-    if (!updateTime($('a2_tt'))) {
-      evt.stopPropagation();
-      return false;
-    }
-    localStorage['a2_tt'] = $('a2_tt').value;
-    updateEnabledStatus(2);
-    return true;
-  }, false);
-  $('a2_tt').addEventListener('change', function(evt) {
-    if ($('a2_tt').value.length == 4 &&
-        parseTime('0' + $('a2_tt').value)) {
-      $('a2_tt').value = '0' + $('a2_tt').value;
-    }
-    if (!updateTime($('a2_tt'))) {
-      evt.stopPropagation();
-      return false;
-    }
-    localStorage['a2_tt'] = $('a2_tt').value;
-    updateEnabledStatus(2);
-    return true;
-  }, false);
-
-  var a2_on = (localStorage['a2_on'] == 'true');
-  $('a2_on').checked = a2_on;
-  $('a2_on').addEventListener('change', function(evt) {
-    window.setTimeout(function() {
-      localStorage['a2_on'] = $('a2_on').checked;
+  $('a2_tt').addEventListener(
+    'input',
+    function(evt) {
       updateEnabledStatus(2);
-    }, 0);
-  }, false);
+      if (!updateTime($('a2_tt'))) {
+        evt.stopPropagation();
+        return false;
+      }
+      localStorage['a2_tt'] = $('a2_tt').value;
+      updateEnabledStatus(2);
+      return true;
+    },
+    false
+  );
+  $('a2_tt').addEventListener(
+    'change',
+    function(evt) {
+      if ($('a2_tt').value.length == 4 && parseTime('0' + $('a2_tt').value)) {
+        $('a2_tt').value = '0' + $('a2_tt').value;
+      }
+      if (!updateTime($('a2_tt'))) {
+        evt.stopPropagation();
+        return false;
+      }
+      localStorage['a2_tt'] = $('a2_tt').value;
+      updateEnabledStatus(2);
+      return true;
+    },
+    false
+  );
+
+  var a2_on = localStorage['a2_on'] == 'true';
+  $('a2_on').checked = a2_on;
+  $('a2_on').addEventListener(
+    'change',
+    function(evt) {
+      window.setTimeout(function() {
+        localStorage['a2_on'] = $('a2_on').checked;
+        updateEnabledStatus(2);
+      }, 0);
+    },
+    false
+  );
 
   var a2_ampm = localStorage['a2_ampm'] || DEFAULT_A2_AMPM;
   $('a2_ampm').selectedIndex = a2_ampm;
-  $('a2_ampm').addEventListener('change', function(evt) {
-    localStorage['a2_ampm'] = $('a2_ampm').selectedIndex;
-  }, false);
+  $('a2_ampm').addEventListener(
+    'change',
+    function(evt) {
+      localStorage['a2_ampm'] = $('a2_ampm').selectedIndex;
+    },
+    false
+  );
 
   updateEnabledStatus(2);
 
@@ -331,9 +372,13 @@ function load() {
 
   var phrase = localStorage['phrase'] || DEFAULT_PHRASE;
   $('phrase').value = phrase;
-  $('phrase').addEventListener('change', function(evt) {
-    localStorage['phrase'] = $('phrase').value;
-  }, false);
+  $('phrase').addEventListener(
+    'change',
+    function(evt) {
+      localStorage['phrase'] = $('phrase').value;
+    },
+    false
+  );
 
   // Speech parameters
 
@@ -363,9 +408,13 @@ function load() {
     }
   }
   localStorage['sound'] = sound.options[sound.selectedIndex].value;
-  sound.addEventListener('change', function() {
-    localStorage['sound'] = sound.options[sound.selectedIndex].value;
-  }, false);
+  sound.addEventListener(
+    'change',
+    function() {
+      localStorage['sound'] = sound.options[sound.selectedIndex].value;
+    },
+    false
+  );
 
   var playSoundButton = $('playsound');
   playSoundButton.addEventListener('click', function(evt) {
@@ -394,10 +443,14 @@ function load() {
       }
     });
   }
-  voice.addEventListener('change', function() {
-    var i = voice.selectedIndex;
-    localStorage['voice'] = voiceArray[i].voiceName;
-  }, false);
+  voice.addEventListener(
+    'change',
+    function() {
+      var i = voice.selectedIndex;
+      localStorage['voice'] = voiceArray[i].voiceName;
+    },
+    false
+  );
 }
 
 document.addEventListener('DOMContentLoaded', load);

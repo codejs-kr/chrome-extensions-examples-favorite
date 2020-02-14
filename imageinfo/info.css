@@ -22,7 +22,8 @@ table {
   width: 100%;
   margin: 15px 0;
 }
-td, th {
+td,
+th {
   padding: 4px;
 }
 th {
@@ -51,6 +52,7 @@ tr.rendered:nth-child(odd) {
   text-align: center;
   padding: 100px;
 }
-#exif, #output {
+#exif,
+#output {
   display: none;
 }

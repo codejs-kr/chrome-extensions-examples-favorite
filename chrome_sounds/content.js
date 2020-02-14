@@ -4,8 +4,8 @@
  */
 
 function sendEvent(event, value) {
-  console.log("sendEvent: " + event + "," + value);
-  chrome.extension.sendRequest({eventName: event, eventValue: value});
+  console.log('sendEvent: ' + event + ',' + value);
+  chrome.extension.sendRequest({ eventName: event, eventValue: value });
 }
 
 // Timers to trigger "stopEvent" for coalescing events.
@@ -13,7 +13,7 @@ var timers = {};
 
 function stopEvent(type) {
   timers[type] = 0;
-  sendEvent(type, "stopped");
+  sendEvent(type, 'stopped');
 }
 
 // Automatically coalesces repeating events into a start and a stop event.
@@ -26,37 +26,38 @@ function handleEvent(event, type, validator) {
     }
   }
   var timerId = timers[type];
-  var eventInProgress = (timerId > 0);
+  var eventInProgress = timerId > 0;
   if (eventInProgress) {
     clearTimeout(timerId);
     timers[type] = 0;
   } else {
-    sendEvent(type, "started");
+    sendEvent(type, 'started');
   }
   timers[type] = setTimeout(stopEvent, 300, type);
 }
 
 function listenAndCoalesce(target, type, validator) {
-  target.addEventListener(type, function(event) {
-    handleEvent(event, type, validator);
-  }, true);
+  target.addEventListener(
+    type,
+    function(event) {
+      handleEvent(event, type, validator);
+    },
+    true
+  );
 }
 
-listenAndCoalesce(document, "scroll");
+listenAndCoalesce(document, 'scroll');
 
 // For some reason, "resize" doesn't seem to work with addEventListener.
-if ((window == window.top) && document.body && !document.body.onresize) {
+if (window == window.top && document.body && !document.body.onresize) {
   document.body.onresize = function(event) {
-    sendEvent("resize", "");
+    sendEvent('resize', '');
   };
 }
 
-listenAndCoalesce(document, "keypress", function(event) {
-  if (event.charCode == 13)
-    return false;
+listenAndCoalesce(document, 'keypress', function(event) {
+  if (event.charCode == 13) return false;
 
   // TODO(erikkay) This doesn't work in gmail's rich text compose window.
-  return event.target.tagName == "TEXTAREA" ||
-         event.target.tagName == "INPUT" ||
-         event.target.isContentEditable;
+  return event.target.tagName == 'TEXTAREA' || event.target.tagName == 'INPUT' || event.target.isContentEditable;
 });

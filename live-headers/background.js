@@ -3,11 +3,10 @@
 // found in the LICENSE file.
 
 chrome.browserAction.onClicked.addListener(function(tab) {
-  chrome.debugger.attach({tabId:tab.id}, version,
-      onAttach.bind(null, tab.id));
+  chrome.debugger.attach({ tabId: tab.id }, version, onAttach.bind(null, tab.id));
 });
 
-var version = "1.0";
+var version = '1.0';
 
 function onAttach(tabId) {
   if (chrome.runtime.lastError) {
@@ -15,6 +14,5 @@ function onAttach(tabId) {
     return;
   }
 
-  chrome.windows.create(
-      {url: "headers.html?" + tabId, type: "popup", width: 800, height: 600});
+  chrome.windows.create({ url: 'headers.html?' + tabId, type: 'popup', width: 800, height: 600 });
 }

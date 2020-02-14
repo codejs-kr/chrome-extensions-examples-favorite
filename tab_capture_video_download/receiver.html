@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <style>
+      body {
+        align-items: center;
+        background-color: #224;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: none;
+        padding: none;
+      }
+
+      body.shutdown {
+        background-color: #422;
+      }
+
+      #player {
+        display: block;
+        width: 800px;
+        margin-bottom: 20px;
+      }
+
+      button {
+        margin: 0 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <video id="player"></video>
+    <div id="buttons">
+      <button id="record">Start Recording</button>
+      <button id="download">Download</button>
+    </div>
+    <script src="receiver.js"></script>
+    <script src="record.js"></script>
+  </body>
+</html>

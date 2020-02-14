@@ -11,16 +11,14 @@ function speakSelection() {
   var selectedText;
   if (focused) {
     try {
-      selectedText = focused.value.substring(
-          focused.selectionStart, focused.selectionEnd);
-    } catch (err) {
-    }
+      selectedText = focused.value.substring(focused.selectionStart, focused.selectionEnd);
+    } catch (err) {}
   }
   if (selectedText == undefined) {
     var sel = window.getSelection();
     var selectedText = sel.toString();
   }
-  chrome.extension.sendRequest({'speak': selectedText});
+  chrome.extension.sendRequest({ speak: selectedText });
 }
 
 function onExtensionMessage(request) {
@@ -36,21 +34,25 @@ function onExtensionMessage(request) {
 
 function initContentScript() {
   chrome.extension.onRequest.addListener(onExtensionMessage);
-  chrome.extension.sendRequest({'init': true}, onExtensionMessage);
+  chrome.extension.sendRequest({ init: true }, onExtensionMessage);
 
-  document.addEventListener('keydown', function(evt) {
-    if (!document.hasFocus()) {
+  document.addEventListener(
+    'keydown',
+    function(evt) {
+      if (!document.hasFocus()) {
+        return true;
+      }
+      var keyStr = keyEventToString(evt);
+      if (keyStr == speakKeyStr && speakKeyStr.length > 0) {
+        speakSelection();
+        evt.stopPropagation();
+        evt.preventDefault();
+        return false;
+      }
       return true;
-    }
-    var keyStr = keyEventToString(evt);
-    if (keyStr == speakKeyStr && speakKeyStr.length > 0) {
-      speakSelection();
-      evt.stopPropagation();
-      evt.preventDefault();
-      return false;
-    }
-    return true;
-  }, false);
+    },
+    false
+  );
 }
 
 initContentScript();

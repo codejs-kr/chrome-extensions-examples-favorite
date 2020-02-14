@@ -31,29 +31,23 @@ document.addEventListener('DOMContentLoaded', function() {
   // parameter in the function calls below, and they would act on the current
   // tab by default, but for the purposes of this demo we will always use the
   // API with an explicit tabId to demonstrate its use.
-  chrome.tabs.query({active: true}, function (tabs) {
-    if (tabs.length > 1)
-      console.log(
-          '[ZoomDemoExtension] Query unexpectedly returned more than 1 tab.');
+  chrome.tabs.query({ active: true }, function(tabs) {
+    if (tabs.length > 1) console.log('[ZoomDemoExtension] Query unexpectedly returned more than 1 tab.');
     tabId = tabs[0].id;
 
     chrome.tabs.getZoomSettings(tabId, function(zoomSettings) {
       var modeRadios = document.getElementsByName('modeRadio');
       for (var i = 0; i < modeRadios.length; i++) {
-        if (modeRadios[i].value == zoomSettings.mode)
-          modeRadios[i].checked = true;
+        if (modeRadios[i].value == zoomSettings.mode) modeRadios[i].checked = true;
       }
 
       var scopeRadios = document.getElementsByName('scopeRadio');
       for (var i = 0; i < scopeRadios.length; i++) {
-        if (scopeRadios[i].value == zoomSettings.scope)
-          scopeRadios[i].checked = true;
+        if (scopeRadios[i].value == zoomSettings.scope) scopeRadios[i].checked = true;
       }
 
-      var percentDefaultZoom =
-          parseFloat(zoomSettings.defaultZoomFactor) * 100;
-      document.getElementById('defaultLabel').textContent =
-          'Default: ' + percentDefaultZoom.toFixed(1) + '%';
+      var percentDefaultZoom = parseFloat(zoomSettings.defaultZoomFactor) * 100;
+      document.getElementById('defaultLabel').textContent = 'Default: ' + percentDefaultZoom.toFixed(1) + '%';
     });
 
     chrome.tabs.getZoom(tabId, displayZoomLevel);
@@ -73,14 +67,12 @@ function zoomChangeListener(zoomChangeInfo) {
 chrome.tabs.onZoomChange.addListener(zoomChangeListener);
 
 function changeZoomByFactorDelta(factorDelta) {
-  if (tabId == -1)
-    return;
+  if (tabId == -1) return;
 
   chrome.tabs.getZoom(tabId, function(zoomFactor) {
     var newZoomFactor = factorDelta * zoomFactor;
     chrome.tabs.setZoom(tabId, newZoomFactor, function() {
-      if (chrome.runtime.lastError)
-        console.log('[ZoomDemoExtension] ' + chrome.runtime.lastError.message);
+      if (chrome.runtime.lastError) console.log('[ZoomDemoExtension] ' + chrome.runtime.lastError.message);
     });
   });
 }
@@ -90,50 +82,42 @@ function doZoomIn() {
 }
 
 function doZoomOut() {
-  changeZoomByFactorDelta(1.0/zoomStep);
+  changeZoomByFactorDelta(1.0 / zoomStep);
 }
 
 function doZoomDefault() {
-  if (tabId == -1)
-    return;
+  if (tabId == -1) return;
 
   chrome.tabs.setZoom(tabId, 0, function() {
-    if (chrome.runtime.lastError)
-      console.log('[ZoomDemoExtension] ' + chrome.runtime.lastError.message);
+    if (chrome.runtime.lastError) console.log('[ZoomDemoExtension] ' + chrome.runtime.lastError.message);
   });
 }
 
 function doSetMode() {
-  if (tabId == -1)
-    return;
+  if (tabId == -1) return;
 
   var modeVal;
   var modeRadios = document.getElementsByName('modeRadio');
   for (var i = 0; i < modeRadios.length; i++) {
-    if (modeRadios[i].checked)
-      modeVal = modeRadios[i].value;
+    if (modeRadios[i].checked) modeVal = modeRadios[i].value;
   }
 
   var scopeVal;
   var scopeRadios = document.getElementsByName('scopeRadio');
   for (var i = 0; i < scopeRadios.length; i++) {
-    if (scopeRadios[i].checked)
-      scopeVal = scopeRadios[i].value;
+    if (scopeRadios[i].checked) scopeVal = scopeRadios[i].value;
   }
 
   if (!modeVal || !scopeVal) {
-    console.log(
-        '[ZoomDemoExtension] Must specify values for both mode & scope.');
+    console.log('[ZoomDemoExtension] Must specify values for both mode & scope.');
     return;
   }
 
-  chrome.tabs.setZoomSettings(tabId, { mode: modeVal, scope: scopeVal },
-    function() {
-      if (chrome.runtime.lastError) {
-        console.log('[ZoomDemoExtension] doSetMode() error: ' +
-                    chrome.runtime.lastError.message);
-      }
-    });
+  chrome.tabs.setZoomSettings(tabId, { mode: modeVal, scope: scopeVal }, function() {
+    if (chrome.runtime.lastError) {
+      console.log('[ZoomDemoExtension] doSetMode() error: ' + chrome.runtime.lastError.message);
+    }
+  });
 }
 
 function doClose() {
